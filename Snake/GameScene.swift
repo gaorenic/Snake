@@ -10,11 +10,4 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    func titleScreen () {
-        
-    }
-    func instructionScrren () {
-        
-    }
-    
 }
