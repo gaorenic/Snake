@@ -30,8 +30,8 @@ class InfoScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let titleScene = TitleScene(fileNamed: "TitleScene")
-        titleScene?.scaleMode = .aspectFill
-        self.view?.presentScene(titleScene!, transition: SKTransition.crossFade(withDuration: 1))
+        let gameScene = GameScene(fileNamed: "GameScene")
+        gameScene?.scaleMode = .aspectFill
+        self.view?.presentScene(gameScene!, transition: SKTransition.crossFade(withDuration: 1))
     }
 }
