@@ -12,7 +12,15 @@ import GameplayKit
 
 class TitleScene: SKScene {
     
+    var titleLabel = SKLabelNode()
+    
     override func didMove(to view: SKView) {
+        
+        let titleLabel = SKLabelNode(fontNamed: "Chalkduster")
+        titleLabel.text = "Snake"
+        titleLabel.fontSize = 50
+
+        self.addChild(titleLabel)
         
         self.backgroundColor = SKColor.green
     }
@@ -23,3 +31,8 @@ class TitleScene: SKScene {
         self.view?.presentScene(infoScene!, transition: SKTransition.crossFade(withDuration: 1))
     }
 }
+
+
+
+
+
