@@ -15,6 +15,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var redFruit = SKShapeNode()
     var yellowFruit = SKShapeNode()
     var loseZone = SKSpriteNode()
+    var snake = SKShapeNode()
     
     override func didMove(to view: SKView) {
         self.backgroundColor = SKColor.purple
@@ -28,6 +29,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func resetGame() {
         makeRedFruit()
         makeYellowFruit()
+        makeSnake()
     }
     
     func makeRedFruit() {
@@ -38,7 +40,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         redFruit.fillColor = .red
         redFruit.name = "redFruit"
         
-        redFruit.physicsBody = SKPhysicsBody(circleOfRadius: 50)
+        redFruit.physicsBody = SKPhysicsBody(circleOfRadius: 30)
         redFruit.physicsBody?.isDynamic = false
         redFruit.physicsBody?.usesPreciseCollisionDetection = true
         redFruit.physicsBody?.friction = 0
@@ -58,7 +60,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             yellowFruit.name = "yellowFruit"
             
             
-            yellowFruit.physicsBody = SKPhysicsBody(circleOfRadius: 50)
+            yellowFruit.physicsBody = SKPhysicsBody(circleOfRadius: 30)
             yellowFruit.physicsBody?.isDynamic = false
             yellowFruit.physicsBody?.usesPreciseCollisionDetection = true
             yellowFruit.physicsBody?.friction = 0
@@ -75,7 +77,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             yellowFruit.position = CGPoint(x: randWidth, y: randHeight)
             
             addChild(yellowFruit)
+          }
         }
+
+    func makeSnake() {
+        snake.removeFromParent()
+        snake = SKShapeNode(circleOfRadius: 30)
+        snake.position = CGPoint(x: frame.midX, y: frame.midY)
+        snake.strokeColor = .black
+        snake.fillColor = .black
+        snake.name = "snake"
+        
+        snake.physicsBody = SKPhysicsBody(circleOfRadius: 30)
+        snake.physicsBody?.isDynamic = false
+        snake.physicsBody?.usesPreciseCollisionDetection = true
+        snake.physicsBody?.friction = 0
+        snake.physicsBody?.affectedByGravity = false
+        snake.physicsBody?.contactTestBitMask = (snake.physicsBody?.collisionBitMask)!
+        
+        addChild(snake)
     }
     
     func randomNumber(range: Range<CGFloat>) -> CGFloat {
