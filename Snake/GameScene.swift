@@ -16,8 +16,6 @@ struct ColliderType {
     static let yellowFruit: UInt32 = 2
     static let snake: UInt32 = 3
     static let snakeBody: UInt32 = 4
-    static let makeGameBorder: UInt32 = 5
-    
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -29,28 +27,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var playLabel = SKLabelNode()
     var direction = "Right"
     var timer: Timer?
-
-    var snakePB = SKPhysicsBody()
-    var snakeBodyPB = SKPhysicsBody()
     
     override func didMove(to view: SKView) {
         self.backgroundColor = SKColor.purple
         self.physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         
-        timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(moveSnake), userInfo: nil, repeats: true)
-        
-        snakeBody.physicsBody?.categoryBitMask = ColliderType.snakeBody
-        snakeBody.physicsBody?.collisionBitMask = ColliderType.snake
-        snakeBody.physicsBody?.contactTestBitMask = ColliderType.snake
-        
-        redFruit.physicsBody?.categoryBitMask = ColliderType.redFruit
-        
-        yellowFruit.physicsBody?.categoryBitMask = ColliderType.yellowFruit
+        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(moveSnake), userInfo: nil, repeats: true)
         
         addSwipeGestureReconizers()
         resetGame()
-        
     }
     
     func resetGame() {
@@ -108,17 +94,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         default:
             print("move nowhere")
         }
-//        //snake[0].run(SKAction.move(to: headPosition, duration: 1.0))
-//        for (index, segment) in snake.enumerated() {
-//            if index > 0 {
-//                let segmentPosition = snake[index - 1].position
-//                print("This is segment \(index)")
-//                print("Current location: \(segment.parent!.position)")
-//                print("Moving to       : \(segmentPosition)")
-//                segment.position = segmentPosition
-//                //segment.run(SKAction.move(to: segmentPosition, duration: 1.0))
-//            }
-//        }
+        
         print("The snake head is moving to \(headPosition)")
         snake[0].run(SKAction.move(to: headPosition, duration: 1.0))
     }
@@ -157,6 +133,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         snakeBody.physicsBody?.usesPreciseCollisionDetection = true
         snakeBody.physicsBody?.friction = 0
         snakeBody.physicsBody?.affectedByGravity = false
+        snakeBody.physicsBody?.categoryBitMask = ColliderType.snakeBody
+        snakeBody.physicsBody?.collisionBitMask = ColliderType.snakeBody
+        snakeBody.physicsBody?.contactTestBitMask = ColliderType.snakeBody
     }
     
     func makeRedFruit() {
@@ -173,6 +152,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             redFruit.physicsBody?.friction = 0
             redFruit.physicsBody?.affectedByGravity = false
             redFruit.physicsBody?.contactTestBitMask = ColliderType.redFruit
+            redFruit.physicsBody?.categoryBitMask = ColliderType.redFruit
             
             let widthL = -self.frame.size.width / 2 + redFruit.frame.size.width / 2
             let widthH = self.frame.size.width / 2 - redFruit.frame.size.width / 2
@@ -201,6 +181,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             yellowFruit.physicsBody?.friction = 0
             yellowFruit.physicsBody?.affectedByGravity = false
             yellowFruit.physicsBody?.contactTestBitMask = ColliderType.yellowFruit
+            yellowFruit.physicsBody?.categoryBitMask = ColliderType.yellowFruit
             
             let widthL = -self.frame.size.width / 2 + yellowFruit.frame.size.width / 2
             let widthH = self.frame.size.width / 2 - yellowFruit.frame.size.width / 2
@@ -217,8 +198,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func randomNumber(range: Range<CGFloat>) -> CGFloat {
         //function that gives a random number of a range of CGFloats entered
-        let min = range.lowerBound
-        let max = range.upperBound
+        let min = range.lowerBound + 130
+        let max = range.upperBound - 130
         return CGFloat(arc4random_uniform(UInt32(CGFloat(max - min)))) + min
     }
     
@@ -251,37 +232,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             print("redFruit contact was made")
             makeRedFruit()
         }
-        
         if firstBody.node?.name == "snake" && secondBody.node?.name == "yellowFruit" {
             
             yellowFruit.removeFromParent()
             print("yellowFruit contact was made")
             makeYellowFruit()
         }
-        
-        //snakeBody joint
-        if contact.bodyA.node!.name == "snake"
-        {
-            // let joint = SKPhysicsJointFixed.joint(withBodyA: snakePB, bodyB: snakeBodyPB, anchor: CGPoint(x: self.frame - 30, y: self.frame - 30))
-            //            contact.bodyB.node!.removeFromParent()
-        }
-        else
-        {
-            
-        }
-        
-        if firstBody.node?.name == "snake" && secondBody.node?.name == "makeGameBorder" {
-            resetGame()
-        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        for touch in touches {
-//
- //           let location = touch.location(in: self)
-            
- //           snake.position.x = location.x
-  //          snake.position.y = location.y
- //       }
+        
     }
 }
