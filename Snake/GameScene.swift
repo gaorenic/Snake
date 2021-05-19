@@ -30,6 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timer: Timer?
     var score = 0
     var counter = 0
+    var scoreCounter = 0
     var gameOver = true
     
     override func didMove(to view: SKView) {
@@ -67,13 +68,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         playLabel.fontSize = 48
         playLabel.text = ""
         playLabel.fontName = "Arial"
-        playLabel.position = CGPoint(x: frame.midX, y: frame.midY - 50)
+        playLabel.position = CGPoint(x: frame.midX, y: frame.midY)
         playLabel.name = "play"
         addChild(playLabel)
         
-        scoreLabel.fontSize = 24
+        scoreLabel.fontSize = 32
+        scoreLabel.text = "Score: 0"
         scoreLabel.fontName = "Arial"
-        scoreLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 75)
+        scoreLabel.fontColor = .black
+        scoreLabel.position = CGPoint(x: frame.midX - 275, y: frame.midY + 495)
         addChild(scoreLabel)
     }
     
@@ -295,7 +298,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         default:
             print("move nowhere")
         }
-        
         print("The snake head is moving to \(headPosition)")
         snake[0].run(SKAction.move(to: headPosition, duration: 0.5))
     }
@@ -305,9 +307,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             for node in nodes(at: location) {
                 if node.name == "play" {
-                    gameOver = false
-                    score = 0
-                    updateLabels()
                     startGame()
                 }
             }
@@ -319,35 +318,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var secondBody = SKPhysicsBody()
         print("contact began")
         if contact.bodyA.node?.name == "snake" {
-            
             firstBody = contact.bodyA
             secondBody = contact.bodyB
         }
+        
         else{
             firstBody = contact.bodyB
             secondBody = contact.bodyA
-            
         }
+        
         if firstBody.node?.name == "snake" && secondBody.node?.name == "redFruit" {
-            
             redFruit.removeFromParent()
             print("redFruit contact was made")
             score += 1
             updateLabels()
             makeRedFruit()
         }
+        
         if firstBody.node?.name == "snake" && secondBody.node?.name == "yellowFruit" {
-            
             yellowFruit.removeFromParent()
             print("yellowFruit contact was made")
             score += 2
             updateLabels()
             makeYellowFruit()
         }
+        
         if firstBody.node?.name == "snake" && secondBody.node?.name == "snakeBody" {
-            
+            score = 0
             resetGame()
+            playLabel.text = "You lose! Tap to play again"
         }
+        
         if contact.bodyA.node?.name == "border" ||
             contact.bodyB.node?.name == "border" {
             resetGame()
