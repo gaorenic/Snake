@@ -37,25 +37,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         
-        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(moveSnake), userInfo: nil, repeats: true)
-        
         addSwipeGestureReconizers()
         makeLabels()
+        startGame()
         makeBorder()
-        resetGame()
     }
     
-    func resetGame() {
+    func startGame() {
+        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(moveSnake), userInfo: nil, repeats: true)
         makeSnake()
         makeRedFruit()
         makeYellowFruit()
     }
     
+    func resetGame() {
+        redFruit.removeFromParent()
+        yellowFruit.removeFromParent()
+        for segment in snake {
+            segment.removeFromParent()
+        }
+        for segment in tail {
+            segment.removeFromParent()
+        }
+        timer?.invalidate()
+        updateLabels()
+    }
+    
     func makeLabels() {
+        playLabel.fontSize = 48
+        playLabel.text = ""
+        playLabel.fontName = "Arial"
+        playLabel.position = CGPoint(x: frame.midX, y: frame.midY - 50)
+        playLabel.name = "play"
+        addChild(playLabel)
+        
         scoreLabel.fontSize = 24
         scoreLabel.fontName = "Arial"
         scoreLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 75)
-        scoreLabel.name = "livesLabel"
         addChild(scoreLabel)
     }
     
@@ -91,6 +109,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         head.physicsBody?.contactTestBitMask = ColliderType.redFruit
         head.physicsBody?.collisionBitMask = ColliderType.yellowFruit
         head.physicsBody?.contactTestBitMask = ColliderType.yellowFruit
+        head.physicsBody?.collisionBitMask = ColliderType.snakeBody
+        head.physicsBody?.contactTestBitMask = ColliderType.snakeBody
         
         snake.append(head)
         addChild(head)
@@ -112,6 +132,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             snakeBody.physicsBody = SKPhysicsBody(circleOfRadius: 30)
             snakeBody.physicsBody?.affectedByGravity = false
             snakeBody.physicsBody?.contactTestBitMask = (snakeBody.physicsBody?.collisionBitMask)!
+            snakeBody.physicsBody?.contactTestBitMask = ColliderType.snakeBody
+            snakeBody.physicsBody?.categoryBitMask = ColliderType.snakeBody
         }
         tail.append(snakeBody)
         addChild(snakeBody)
@@ -223,12 +245,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(rightBorder)
     }
     
-    func destroySnake() {
-        for segment in snake {
-            segment.removeFromParent()
-        }
-    }
-    
     @objc func handleSwipe(gesture: UIGestureRecognizer) {
         if let gesture = gesture as? UISwipeGestureRecognizer {
             switch gesture.direction {
@@ -284,6 +300,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         snake[0].run(SKAction.move(to: headPosition, duration: 0.5))
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch.location(in: self)
+            for node in nodes(at: location) {
+                if node.name == "play" {
+                    gameOver = false
+                    score = 0
+                    updateLabels()
+                    startGame()
+                }
+            }
+        }
+    }
+    
     func didBegin(_ contact: SKPhysicsContact) {
         var firstBody = SKPhysicsBody()
         var secondBody = SKPhysicsBody()
@@ -314,9 +344,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             updateLabels()
             makeYellowFruit()
         }
+        if firstBody.node?.name == "snake" && secondBody.node?.name == "snakeBody" {
+            
+            resetGame()
+        }
         if contact.bodyA.node?.name == "border" ||
             contact.bodyB.node?.name == "border" {
-            destroySnake()
+            resetGame()
         }
     }
 }
