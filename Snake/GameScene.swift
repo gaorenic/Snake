@@ -49,6 +49,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makeSnake()
         makeRedFruit()
         makeYellowFruit()
+        playLabel.alpha = 0
     }
     
     func resetGame() {
@@ -60,8 +61,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for segment in tail {
             segment.removeFromParent()
         }
+        tail = [SKSpriteNode]()
         timer?.invalidate()
         updateLabels()
+        playLabel.alpha = 1
     }
     
     func makeLabels() {
@@ -314,44 +317,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        var firstBody = SKPhysicsBody()
-        var secondBody = SKPhysicsBody()
-        print("contact began")
-        if contact.bodyA.node?.name == "snake" {
-            firstBody = contact.bodyA
-            secondBody = contact.bodyB
-        }
-        
-        else{
-            firstBody = contact.bodyB
-            secondBody = contact.bodyA
-        }
-        
-        if firstBody.node?.name == "snake" && secondBody.node?.name == "redFruit" {
-            redFruit.removeFromParent()
-            print("redFruit contact was made")
-            score += 1
-            updateLabels()
-            makeRedFruit()
-        }
-        
-        if firstBody.node?.name == "snake" && secondBody.node?.name == "yellowFruit" {
-            yellowFruit.removeFromParent()
-            print("yellowFruit contact was made")
-            score += 2
-            updateLabels()
-            makeYellowFruit()
-        }
-        
-        if firstBody.node?.name == "snake" && secondBody.node?.name == "snakeBody" {
-            score = 0
-            resetGame()
-            playLabel.text = "You lose! Tap to play again"
-        }
-        
-        if contact.bodyA.node?.name == "border" ||
-            contact.bodyB.node?.name == "border" {
-            resetGame()
+        if contact.bodyA.node?.name == "snake" ||
+            contact.bodyB.node?.name == "snake" {
+            // snake contact made
+            if contact.bodyA.node?.name == "redFruit" ||
+                contact.bodyB.node?.name == "redFruit" {
+                // snake eats redFruit
+                redFruit.removeFromParent()
+                print("redFruit contact was made")
+                score += 1
+                updateLabels()
+                makeRedFruit()
+            }
+            else if contact.bodyA.node?.name == "yellowFruit" ||
+                        contact.bodyB.node?.name == "yellowFruit" {
+                // snake eats yellowFruit
+                yellowFruit.removeFromParent()
+                print("redFruit contact was made")
+                score += 2
+                updateLabels()
+                makeYellowFruit()
+            }
+            else if contact.bodyA.node?.name == "snakeBody" ||
+                    contact.bodyB.node?.name == "snakeBody" ||
+                    contact.bodyA.node?.name == "border" ||
+                    contact.bodyB.node?.name == "border"  {
+                // snake touches itself or hits border
+                print("snake touched itself or hit border")
+                score = 0
+                resetGame()
+                playLabel.text = "You Lose! Tap to play again"
+            }
         }
     }
 }
