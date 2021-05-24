@@ -17,7 +17,7 @@ class InfoScene: SKScene {
         self.backgroundColor = SKColor.blue
         
         let infoLabel = SKLabelNode(fontNamed: "Chalkduster")
-        infoLabel.text = "Swipe your finger in the direction you want the snake to move in. If you eat a red fruit, the snake will grow by 1. If you eat a yellow fruit, the snake will grow by 2. Eat a red fruit for a new one to appear. Yellow fruits will appear every 30 seconds. Gain __ points to win. If you hit the border or eat the snakes tail, you will lose."
+        infoLabel.text = "Swipe your finger in the direction you want the snake to move in. If you eat a red fruit, the snake will grow by 1. If you eat a yellow fruit, the snake will grow by 2. Eat a red fruit or a yellow fruit and new one to appear. The game will end if you hit the wall or hit your tail"
         infoLabel.fontColor = .black
         infoLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
         infoLabel.preferredMaxLayoutWidth = frame.width-30
